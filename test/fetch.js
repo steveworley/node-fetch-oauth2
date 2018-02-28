@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai'
-import fetchWithConfig from '../src/index'
+import fetchWithConfig from '../lib/index'
 
 describe('Node Fetch Oauth', () => {
 

@@ -4,10 +4,11 @@
   "description": "Sane defaults for oauth fetch that can be used for other projects",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require babel-register",
+    "test": "npm run build && mocha --require babel-register",
     "build": "babel src --out-dir lib",
     "preversion": "npm run test",
-    "version": "npm run build"
+    "version": "npm run build",
+    "postinstall": "npm run build"
   },
   "author": "Steve Worley",
   "license": "ISC",
