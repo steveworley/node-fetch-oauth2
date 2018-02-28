@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --require babel-register",
-    "build": "babel src --out-dir lib"
+    "build": "babel src --out-dir lib",
+    "preversion": "npm run test",
+    "version": "npm run build"
   },
   "author": "Steve Worley",
   "license": "ISC",
