@@ -3,9 +3,9 @@ import fetchWithMiddleware from './fetchWithMiddleware'
 import tokenStorage from './tokenStorage'
 import fetch from 'cross-fetch'
 
-const defaults = {
+export let defaults = {
   fetchToken: () => {
-    return Promise.resolve('1234')
+    return Promise.resolve(false)
   },
   generateToken: (config, host, uri = 'oauth/token') => {
     uri = uri.startsWith('/') ? uri : `/${uri}`
@@ -17,13 +17,18 @@ const defaults = {
     }
   },
   host: false,
-  headers: []
+  headers: [],
+  config: {},
+  tokenUri: 'oauth/token'
 }
 
 export default function(params, ...middlewares) {
   params = {...defaults, ...params}
   
-  const { host, headers, initialToken, fetchToken, generateToken } = params
+  const { host, headers, initialToken, fetchToken, generateToken, config, tokenUri } = params
+
+  generateToken = generateToken(host, config, tokenUri)
+
   const storage = tokenStorage({ initialToken, fetchToken, generateToken })
 
   if (host) {

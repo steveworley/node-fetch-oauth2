@@ -1,5 +1,5 @@
 {
-  "name": "node-fetch-oauth",
+  "name": "node-fetch-oauth2",
   "version": "1.0.0-dev",
   "description": "Sane defaults for oauth fetch that can be used for other projects",
   "main": "src/index.js",
