@@ -1,1 +1,1 @@
-module.exports = reqiure("./lib/index")
+module.exports = require("./lib/index")
