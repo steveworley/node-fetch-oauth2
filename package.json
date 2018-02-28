@@ -1,5 +1,5 @@
 {
-  "name": "acquia-fetch-oauth",
+  "name": "node-fetch-oauth",
   "version": "1.0.0-dev",
   "description": "Sane defaults for oauth fetch that can be used for other projects",
   "main": "src/index.js",
