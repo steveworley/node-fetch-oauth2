@@ -1,41 +1,50 @@
-import fetchWithConfig from './utils/fetchWithConfig'
+/*global Promise */
 
-export async function setOauth2Authorisation({getToken}) {
-  const token = await getToken()
-  return next => async configPromise => {
-    const config = await configPromise
-    return next(config.setOauth2Authorisation(token))
+import fetchWithConfig from './utils/fetchWithConfig.js';
+
+export function addHeaders([name, value]) {
+  return next => config => {
+    return next(config.then(config => config.setHeader(name, value)))
   }
 }
 
-export async function authorisationChallengeHandler({refreshToken}) {
-  const token = await refreshToken()
-  return next => async configPromise => {
-    const repsonse = await next()
-    const config = await configPromise
-
-    if (response.status === 401) {
-      config.setAccsesToken(token)
-      return fetchWithConfig(config)
-    }
-
-    return response
-  }
-}
-
-export function setHost(host) {
-  return next => async configPromise => {
-    const config = await configPromise
-    return next(config.setHost(uri => {
+export function addHost(host) {
+  return next => config => {
+    return next(config.then(config => config.updateUri(uri => {
       uri = uri.startsWith('/') ? uri : `/${uri}`
       return host + uri
-    }))
+    })))
   }
 }
 
-export function setHeaders(header, value) {
-  return next => async configPromise => {
-    const config = await configPromise
-    return next(config.setHeaders(header, value))
+export function setOAuth2Authorization({getToken}) {
+  return next => config => {
+    return next(config.then(config => getToken().then(token => config.setAccessToken(token))));
   }
+}
+
+export function authorisationChallengeHandler({refreshToken}, test = testResponseAuthorisationChallange) {
+  return next => config => {
+    return next(config)
+    .then(response => {
+      return test(response)
+      .then(isAuthorisationChallenge => {
+        if (isAuthorisationChallenge) {
+          return Promise.all([refreshToken(), config])
+          .then(([token, config]) => config.setAccessToken(token))
+          .then(fetchWithConfig)
+        }
+        
+        return response;
+      })
+    });
+  }
+}
+
+function testResponseAuthorisationChallange(response) {
+  if (response.status == 401) {
+    return Promise.resolve(true);
+  }
+  
+  return Promise.resolve(false);
 }

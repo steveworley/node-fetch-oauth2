@@ -1,5 +1,6 @@
-import fetch from 'node-fetch'
+/*global fetch */
+import fetch from 'cross-fetch'
 
-export default function fetchWithConfig({ uri, opts }) {
-  return fetch(uri, opts)
+export default function fetchWithConfig(config) {
+    return fetch(config.uri, config.opts);
 }
