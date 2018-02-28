@@ -25,7 +25,7 @@ export let defaults = {
 export default function(params, ...middlewares) {
   params = {...defaults, ...params}
   
-  const { host, headers, initialToken, fetchToken, generateToken, config, tokenUri } = params
+  let { host, headers, initialToken, fetchToken, generateToken, config, tokenUri } = params
 
   generateToken = generateToken(host, config, tokenUri)
 
