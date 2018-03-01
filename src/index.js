@@ -1,23 +1,32 @@
 import * as middleware from './middleware'
 import fetchWithMiddleware from './fetchWithMiddleware'
 import tokenStorage from './tokenStorage'
-import fetch from 'cross-fetch'
 
 export let defaults = {
   fetchToken: () => {
-
     return !!tokenStorage.token ? Promise.resolve(tokenStorage.token) : Promise.reject('Generate token')
   },
   generateToken: (host, config = {}, uri = 'oauth/token') => {
     uri = uri.startsWith('/') ? uri : `/${uri}`
     return async () => {
-      const body = Object.entries(config).map(([key, val]) => `${key}=${encodeURIComponent(val)}`).join('&')
-      const response = await fetch(host+uri)
-      const token = await response.json()
+      const body = Object.entries(config).map(([key, val]) => `${key}=${val}`).join('&')
 
-      tokenStorage.token = token
+      const response = await fetchWithMiddleware()(host+uri, { 
+        method: 'post',
+        body,
+        headers: {
+          'Content-Type': "application/x-www-form-urlencoded"
+        }
+      })
+
+      if (response.ok) {
+        const token = await response.json()
+        tokenStorage.token = token
+        return token
+      }
       
-      return token
+      const { message } = await response.json()
+      throw new Error(`[Unable to generate token] ${message}`)
     }
   },
   host: false,
