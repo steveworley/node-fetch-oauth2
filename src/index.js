@@ -18,16 +18,16 @@ export let defaults = {
   },
   host: false,
   headers: [],
-  config: {},
+  tokenConfig: {},
   tokenUri: 'oauth/token'
 }
 
 export default function(params, ...middlewares) {
   params = {...defaults, ...params}
   
-  let { host, headers, initialToken, fetchToken, generateToken, config, tokenUri } = params
+  let { host, headers, initialToken, fetchToken, generateToken, tokenConfig, tokenUri } = params
 
-  generateToken = generateToken(host, config, tokenUri)
+  generateToken = generateToken(tokenConfig, host, tokenUri)
 
   const storage = tokenStorage({ initialToken, fetchToken, generateToken })
 
