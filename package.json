@@ -6,9 +6,8 @@
   "scripts": {
     "test": "npm run build && mocha --require babel-register",
     "build": "babel src --out-dir lib",
-    "preversion": "npm run test",
-    "version": "npm run build",
-    "postinstall": "npm run build"
+    "preversion": "npm test",
+    "version": "npm run build"
   },
   "author": "Steve Worley",
   "license": "ISC",
