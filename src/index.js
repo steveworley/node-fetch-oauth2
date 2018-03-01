@@ -5,14 +5,18 @@ import fetch from 'cross-fetch'
 
 export let defaults = {
   fetchToken: () => {
-    return Promise.resolve(false)
+
+    return !!tokenStorage.token ? Promise.resolve(tokenStorage.token) : Promise.reject('Generate token')
   },
-  generateToken: (config, host, uri = 'oauth/token') => {
+  generateToken: (host, config = {}, uri = 'oauth/token') => {
     uri = uri.startsWith('/') ? uri : `/${uri}`
     return async () => {
       const body = Object.entries(config).map(([key, val]) => `${key}=${encodeURIComponent(val)}`).join('&')
       const response = await fetch(host+uri)
       const token = await response.json()
+
+      tokenStorage.token = token
+      
       return token
     }
   },
@@ -27,7 +31,7 @@ export default function(params, ...middlewares) {
   
   let { host, headers, initialToken, fetchToken, generateToken, tokenConfig, tokenUri } = params
 
-  generateToken = generateToken(tokenConfig, host, tokenUri)
+  generateToken = generateToken(host, tokenConfig, tokenUri)
 
   const storage = tokenStorage({ initialToken, fetchToken, generateToken })
 
